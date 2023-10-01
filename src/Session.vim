@@ -13,21 +13,13 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +20 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/CreateAndApplyStrategyHandler.py
-badd +121 ~/Document/projects/sideProjects/inventoryMatcher/src/main.py
-badd +55 ~/Document/projects/sideProjects/inventoryMatcher/src/tasks.py
-badd +30 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
-badd +20 QuantityReconciliation/Reconciler/entity/Reconciler.py
-badd +21 QuantityReconciliation/infrastructure/projection/ReconcilerState.py
-badd +7 QuantityReconciliation/infrastructure/eventStore/EventStore.py
-badd +53 QuantityReconciliation/infrastructure/eventStore/EventStoreMongoDbImp.py
-badd +6 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/ReconciliationWasInitialized.py
-badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/ProblematicLineItemsInAmortizationTableExtracted.py
-badd +11 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/InitializeReconciliationHandler.py
-badd +2 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/command/CreateAndApplyStrategy.py
-badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/shared/eventInfrastructure/DomainEvent.py
-badd +87 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/eventStore/DomainEventDataMapper.py
-badd +4 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/Strategy/domainEvents/StrategyWasChosen.py
+badd +16 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/CreateAndApplyStrategyHandler.py
+badd +98 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
+badd +21 QuantityReconciliation/Reconciler/entity/Reconciler.py
+badd +3 QuantityReconciliation/infrastructure/projection/ReconcilerState.py
+badd +11 QuantityReconciliation/infrastructure/eventStore/EventStore.py
+badd +45 QuantityReconciliation/infrastructure/eventStore/EventStoreMongoDbImp.py
+badd +35 QuantityReconciliation/infrastructure/eventStore/DomainEventDataMapper.py
 argglobal
 %argdel
 $argadd .
@@ -44,12 +36,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 34 - ((24 * winheight(0) + 13) / 27)
+let s:l = 76 - ((23 * winheight(0) + 13) / 27)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 34
-normal! 038|
+keepjumps 76
+normal! 067|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

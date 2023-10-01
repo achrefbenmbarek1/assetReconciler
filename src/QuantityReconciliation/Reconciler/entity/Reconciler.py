@@ -11,13 +11,14 @@ from shared.eventInfrastructure.DomainEvent import DomainEvent
 
 
 class Reconciler:
-    domainEvents:list[DomainEvent] = list()
     reconciliationState:ReconciliationState
     
     def __init__(self,events:list[DomainEvent]) -> None:
         self.reconciliationState = ReconciliationState()
+        self.domainEvents:list[DomainEvent] = []
         for event in events:
             self.reconciliationState.apply(event)
+            print("this is the last resort", len(self.domainEvents))
     
     def appendEvent(self,event:DomainEvent):
         self.domainEvents.append(event)

@@ -15,9 +15,10 @@ class CreateAndApplyStrategyHandler:
 
     def createAndApplyStrategy(self, createAndApplyStrategyCmd:CreateAndApplyStrategy):
         print("this is the second print",createAndApplyStrategyCmd.reconciliationId)
-        domainEvents = self.reconciliationRepository.loadEvents(createAndApplyStrategyCmd.reconciliationId)
-        print("this is the len", len(domainEvents))
-        reconciler:Reconciler = Reconciler(domainEvents)
+        currentDomainEvents = self.reconciliationRepository.loadEvents(createAndApplyStrategyCmd.reconciliationId)
+        print("this is the len", len(currentDomainEvents))
+        reconciler:Reconciler = Reconciler(currentDomainEvents)
+        print("please",len(reconciler.domainEvents))
         print("or event better", reconciler.reconciliationState.version)
         eventId = self.idGenerator.generateId()
         createStrategy: CreateStrategy = CreateStrategy(createAndApplyStrategyCmd.orderedCycles, eventId)

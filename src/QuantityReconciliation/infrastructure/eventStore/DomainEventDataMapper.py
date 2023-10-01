@@ -25,7 +25,6 @@ class DomainEventDataMapper:
         print(eventData["payload"])
         print(type(eventData["payload"]))
         payload = json.loads(eventData["payload"])
-        print("did we got past there")
         eventType = eventData["eventType"]
 
         if eventType == "FileLoaded":
