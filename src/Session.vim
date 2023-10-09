@@ -13,19 +13,25 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +16 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/CreateAndApplyStrategyHandler.py
-badd +98 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
-badd +21 QuantityReconciliation/Reconciler/entity/Reconciler.py
-badd +3 QuantityReconciliation/infrastructure/projection/ReconcilerState.py
-badd +11 QuantityReconciliation/infrastructure/eventStore/EventStore.py
-badd +45 QuantityReconciliation/infrastructure/eventStore/EventStoreMongoDbImp.py
-badd +35 QuantityReconciliation/infrastructure/eventStore/DomainEventDataMapper.py
+badd +10 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/InitializeReconciliationHandler.py
+badd +62 ~/Document/projects/sideProjects/inventoryMatcher/src/main.py
+badd +22 QuantityReconciliation/Reconciler/entity/Reconciler.py
+badd +38 QuantityReconciliation/infrastructure/projection/ReconcilerState.py
+badd +5 QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
+badd +24 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/CreateAndApplyStrategyHandler.py
+badd +29 QuantityReconciliation/infrastructure/eventStore/DomainEventDataMapper.py
+badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/service/IdGenerator.py
+badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/service/FileWrapperImp.py
+badd +3 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/StrategyWasChosen.py
+badd +1 QuantityReconciliation/infrastructure/projection/CycleState.py
+badd +4 QuantityReconciliation/Reconciler/domainEvent/FileLoaded.py
+badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/MissingPhysicalInventoryLineItemsExtracted.py
+badd +4 QuantityReconciliation/Reconciler/domainEvent/PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted.py
 argglobal
 %argdel
 $argadd .
-edit QuantityReconciliation/Reconciler/entity/Reconciler.py
+edit QuantityReconciliation/Reconciler/domainEvent/PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted.py
 argglobal
-balt QuantityReconciliation/infrastructure/projection/ReconcilerState.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -36,12 +42,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 76 - ((23 * winheight(0) + 13) / 27)
+let s:l = 4 - ((3 * winheight(0) + 13) / 27)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 76
-normal! 067|
+keepjumps 4
+normal! 020|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

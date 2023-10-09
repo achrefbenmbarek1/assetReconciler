@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from shared.eventInfrastructure.DomainEvent import DomainEvent
+from QuantityReconciliation.Reconciler.domainEvent.DomainEvent import DomainEvent
+
 
 class EventStore(ABC):
     @abstractmethod

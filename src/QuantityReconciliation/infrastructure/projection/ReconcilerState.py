@@ -1,12 +1,11 @@
-from QuantityReconciliation.Reconciler.Strategy.domainEvents.StrategyWasChosen import StrategyWasChosen
-from QuantityReconciliation.Reconciler.domainEvent.MissingAmortizationTableLineItemsExtracted import MissingAmortizationTableLineItemsExtracted
+from QuantityReconciliation.Reconciler.domainEvent.DomainEvent import DomainEvent
+from QuantityReconciliation.Reconciler.domainEvent.PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted import PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted
 from QuantityReconciliation.Reconciler.domainEvent.MissingPhysicalInventoryLineItemsExtracted import MissingPhysicalInventoryLineItemsExtracted
 from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInAmortizationTableExtracted import ProblematicLineItemsInAmortizationTableExtracted
 from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInPhysicalInventoryExtracted import ProblematicLineItemsInPhysicalInventoryExtracted
 from QuantityReconciliation.Reconciler.domainEvent.ReconciliationWasInitialized import ReconciliationWasInitialized
+from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import StrategyWasChosen
 from QuantityReconciliation.infrastructure.projection.CycleState import CycleState
-from shared.eventInfrastructure.DomainEvent import DomainEvent
-
 
 class ReconciliationState:
     def __init__(self) -> None:
@@ -35,7 +34,7 @@ class ReconciliationState:
         if(isinstance(event, ProblematicLineItemsInPhysicalInventoryExtracted)):
             self.version += 1
         
-        if(isinstance(event, MissingAmortizationTableLineItemsExtracted)):
+        if(isinstance(event, PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted)):
             self.version += 1
         
         if(isinstance(event, MissingPhysicalInventoryLineItemsExtracted)):

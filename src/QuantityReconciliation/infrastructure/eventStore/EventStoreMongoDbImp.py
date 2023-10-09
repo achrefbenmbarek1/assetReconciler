@@ -1,8 +1,8 @@
 import json
+from QuantityReconciliation.Reconciler.domainEvent.DomainEvent import DomainEvent
 from QuantityReconciliation.infrastructure.eventStore.DomainEventDataMapper import DomainEventDataMapper
 from QuantityReconciliation.infrastructure.eventStore.EventStore import EventStore
 from pymongo import MongoClient
-from shared.eventInfrastructure.DomainEvent import DomainEvent
 from pymongo.errors import ConnectionFailure
 
 
@@ -26,22 +26,6 @@ class EventStoreMongoDbImp(EventStore):
             self.mongoClient.close
             
     def appendEvents(self, reconciliationId, domainEvents, expectedVersion) -> None:
-        # currentVersion = self.collection.count_documents({"reconciliationId": reconciler.reconciliationState.reconciliationId}) 
-        # if currentVersion + 1 != reconciler.reconciliationState.version:
-        #     raise Exception("concurrency problem")
-        # eventsData = []
-        # for event in reconciler.domainEvents:
-        #     eventData = {
-        #         "reconciliationId": event.reconciliationId,
-        #         "payload": event.payload,
-        #         "timestamp": event.timestamp,
-        #         "eventType": type(event)
-        #     }
-        #     if event.eventId is not None:
-        #         eventData["_id"] = event.eventId
-        #     eventsData.append(eventData)   
-        # if(eventsData != []):
-        #     self.collection.insert_many(eventsData)
         try:
             self._connect()
             if self.collection is None:
@@ -67,8 +51,6 @@ class EventStoreMongoDbImp(EventStore):
                             "eventType": type(event).__name__,
                             "_id": event.eventId
                         }
-                        # if event.eventId is not None:
-                        #     eventData["_id"] = event.eventId
                         eventsData.append(eventData)
 
                     if eventsData:

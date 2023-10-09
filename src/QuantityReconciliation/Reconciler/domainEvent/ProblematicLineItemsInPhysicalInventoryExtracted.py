@@ -1,4 +1,4 @@
-from shared.eventInfrastructure.DomainEvent import DomainEvent
+from .DomainEvent import DomainEvent
 
 
 class ProblematicLineItemsInPhysicalInventoryExtracted(DomainEvent):

@@ -1,11 +1,9 @@
-from QuantityReconciliation.Reconciler.Strategy.domainEvents.StrategyWasChosen import StrategyWasChosen
+from QuantityReconciliation.Reconciler.domainEvent.DomainEvent import DomainEvent
 from QuantityReconciliation.Reconciler.domainEvent.FileLoaded import FileLoaded
-from QuantityReconciliation.Reconciler.domainEvent.MissingAmortizationTableLineItemsExtracted import (
-    MissingAmortizationTableLineItemsExtracted,
-)
 from QuantityReconciliation.Reconciler.domainEvent.MissingPhysicalInventoryLineItemsExtracted import (
     MissingPhysicalInventoryLineItemsExtracted,
 )
+from QuantityReconciliation.Reconciler.domainEvent.PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted import PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted
 from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInAmortizationTableExtracted import (
     ProblematicLineItemsInAmortizationTableExtracted,
 )
@@ -15,9 +13,9 @@ from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInPhysica
 from QuantityReconciliation.Reconciler.domainEvent.ReconciliationWasInitialized import (
     ReconciliationWasInitialized,
 )
-from shared.eventInfrastructure.DomainEvent import DomainEvent
 import json
 
+from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import StrategyWasChosen
 
 class DomainEventDataMapper:
     def createDomainEvent(self, eventData) -> DomainEvent:
@@ -68,8 +66,8 @@ class DomainEventDataMapper:
             )
             return event
 
-        elif eventType == "MissingAmortizationTableLineItemsExtracted":
-            event = MissingAmortizationTableLineItemsExtracted(
+        elif eventType == "PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted":
+            event = PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted(
                 eventData["_id"],
                 eventData["reconciliationId"],
                 payload["missingAmortizationTableLineItems"],

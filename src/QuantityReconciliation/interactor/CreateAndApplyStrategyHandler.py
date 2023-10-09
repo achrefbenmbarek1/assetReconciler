@@ -1,9 +1,9 @@
 
 from QuantityReconciliation.Reconciler.entity.Reconciler import Reconciler
 from QuantityReconciliation.infrastructure.command.CreateAndApplyStrategy import CreateAndApplyStrategy
+from QuantityReconciliation.infrastructure.command.CreateStrategy import CreateStrategy
 from QuantityReconciliation.infrastructure.repository.ReconciliationRepository import ReconciliationRepository
 from QuantityReconciliation.infrastructure.service.IdGenerator import IdGenerator
-from reconciliationStrategy.infrastructure.dto.command.CreateStrategy import CreateStrategy
 
 
 

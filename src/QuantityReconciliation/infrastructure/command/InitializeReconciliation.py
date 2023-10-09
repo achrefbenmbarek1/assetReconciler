@@ -4,6 +4,3 @@ class InitializeReconciliation:
         self.physcialInventoryLineItems = physicalInventory
         self.amortizationTable = amortizationTable
         self.eventsIds = eventsIds
-        # self.reconciliationInitializedId = reconciliationInitializedId
-        # self.missingPhysicalInvententoryLineItemsExtractedId = missingPhysicalInvententoryLineItemsExtractedId
-        # self.missingAmortizationTableLineItemsExtractedId = missingAmortizationTableLineItemsExtractedId

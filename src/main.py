@@ -1,4 +1,3 @@
-from QuantityReconciliation.infrastructure.FileWrapperImp import FileWrapperImp
 from QuantityReconciliation.infrastructure.command.CreateAndApplyStrategy import (
     CreateAndApplyStrategy,
 )
@@ -8,22 +7,8 @@ from QuantityReconciliation.infrastructure.eventStore.EventStoreMongoDbImp impor
 from QuantityReconciliation.infrastructure.repository.ReconciliationRepository import (
     ReconciliationRepository,
 )
+from QuantityReconciliation.infrastructure.service.FileWrapperImp import FileWrapperImp
 from QuantityReconciliation.infrastructure.service.IdGeneratorImp import IdGeneratorImp
-from QuantityReconciliation.interactor.BuildAmortizationTableReadModelHandler import (
-    buildAmortizationReadModelHandler,
-)
-from QuantityReconciliation.interactor.BuildPhysicalInventoryReadModelHandler import (
-    buildPhysicalInventoryReadModel,
-)
-from QuantityReconciliation.interactor.BuildReportReadModelOfMissingLineItemsInPhysicalInventoryHandler import (
-    buildReportReadModelOfMissingLineItemsInPhysicalInventory,
-)
-from QuantityReconciliation.interactor.BuildReportReadModelOfProblematicLineItemsInAmortizationTableHandler import (
-    buildAmortizationTableReportReadModelOfProblematicLineItems,
-)
-from QuantityReconciliation.interactor.BuildReportReadModelOfProblematicLineItemsInPhysicalInventoryHandler import (
-    buildReportReadModelOfProblematicPhysicalInventory,
-)
 from QuantityReconciliation.interactor.CreateAndApplyStrategyHandler import (
     CreateAndApplyStrategyHandler,
 )
@@ -32,7 +17,6 @@ from QuantityReconciliation.interactor.InitializeReconciliationHandler import (
 )
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
-from shared.eventInfrastructure.eventBus.EventBusImp import EventBusImp
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -50,26 +34,6 @@ class Strategy(BaseModel):
     reconciliationId: str
     orderedCycles: list[Cycle]
 
-
-eventBus: EventBusImp = EventBusImp()
-eventBus.subscribe("ReconciliationWasInitialized", buildPhysicalInventoryReadModel)
-eventBus.subscribe("ReconciliationWasInitialized", buildAmortizationReadModelHandler)
-eventBus.subscribe(
-    "ProblematicLineItemsInAmortizationTableExtracted",
-    buildReportReadModelOfProblematicPhysicalInventory,
-)
-eventBus.subscribe(
-    "ProblematicLineItemsInPhysicalInventoryExtracted",
-    buildAmortizationTableReportReadModelOfProblematicLineItems,
-)
-eventBus.subscribe(
-    "MissingPhysicalInventoryLineItemsExtracted",
-    buildReportReadModelOfMissingLineItemsInPhysicalInventory,
-)
-eventBus.subscribe(
-    "MissingAmortizationTableLineItemsExtracted",
-    buildAmortizationTableReportReadModelOfProblematicLineItems,
-)
 
 app.add_middleware(
     CORSMiddleware,
@@ -113,12 +77,10 @@ async def createAndApplyStrategy(strategy: Strategy):
             reconciliationRepository, idGenerator
         )
         serializedStrategy = strategy.model_dump()
-        print(strategy.reconciliationId)
         createAndApplyStrategyCmd = CreateAndApplyStrategy(
             strategy.reconciliationId, serializedStrategy["orderedCycles"]
         )
         createAndApplyStrategyHandler.createAndApplyStrategy(createAndApplyStrategyCmd)
-        print('we succeeded congrats')
 
         return {"msg": "strategy accepted and is being applied"}
     except Exception as e:

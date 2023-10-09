@@ -1,4 +1,3 @@
-from shared.eventInfrastructure.eventBus.EventBus import EventBus
 from pymongo import MongoClient
 import json
 from celery import Celery
@@ -6,15 +5,9 @@ from celery import Celery
 # celery = Celery("myapp")
 
 celery = Celery(
-    'myapp',
-    broker='redis://localhost:6379/0', 
-    backend='redis://localhost:6379/0')
+    "myapp", broker="redis://localhost:6379/0", backend="redis://localhost:6379/0"
+)
 
-# @celery.task
-# def buildReadModel(events, eventBus:EventBus):
-#     print("welcome to the out of process")
-#     for event in events:
-#         eventBus.publish(event)
 
 @celery.task
 def buildAmortizationReadModel(eventData):
@@ -22,17 +15,11 @@ def buildAmortizationReadModel(eventData):
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
             collection = db["amortizationTableReadModel"]
-            # if event["eventType"] == "ReconciliationWasInitialized":
-            #     amortizationDocument = {
-            #         "amortizationTableLineItems": json.dumps(
-            #             event.payload["amortizationTable"]
-            #         ),
-            #         "_id": event.reconciliationId,
-            #     }
             collection.insert_one(eventData)
 
     except Exception as e:
         raise e
+
 
 @celery.task
 def buildPhysicalInventoryReadModel(eventData):
@@ -45,31 +32,30 @@ def buildPhysicalInventoryReadModel(eventData):
     except Exception as e:
         raise e
 
+
 @celery.task
 def buildReportReadModelOfMissingLineItemsInAmortizationTable(eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
             collection = db["readModelOfMissingLineItemsInAmortizeationTable"]
-            print("I'm heeere")
 
-            reportIdOfProblematicLineItemsInPhysicalInventory = eventData[
-                "_id"
-            ]
-            print("I'm inspecting")
+            reportIdOfProblematicLineItemsInAmortizationTable = eventData["_id"]
             existingReport = collection.find_one(
-                {"_id": reportIdOfProblematicLineItemsInPhysicalInventory}
+                {"_id": reportIdOfProblematicLineItemsInAmortizationTable}
             )
-            
+
             if existingReport:
                 missingLineItemsInAmortizationTable = json.loads(
                     eventData["missingLineItemsInAmortizationTable"]
                 )
-                print("guess who is out of process")
                 print(missingLineItemsInAmortizationTable)
-                
+
                 existingLineItemsIds = set(
-                    lineItem["NumFiche"] for lineItem in existingReport["missingLineItemsInAmortizationTable"]
+                    lineItem["NumFiche"]
+                    for lineItem in existingReport[
+                        "missingLineItemsInAmortizationTable"
+                    ]
                 )
 
                 newMissingLineItems = [
@@ -80,7 +66,116 @@ def buildReportReadModelOfMissingLineItemsInAmortizationTable(eventData):
 
                 if newMissingLineItems:
                     updateOperation = {
-                        "$push": {"missingLineItemsInAmortizationTable": {"$each": newMissingLineItems}}
+                        "$push": {
+                            "missingLineItemsInAmortizationTable": {
+                                "$each": newMissingLineItems
+                            }
+                        }
+                    }
+
+                    collection.update_one(
+                        {"_id": reportIdOfProblematicLineItemsInAmortizationTable},
+                        updateOperation,
+                    )
+
+            else:
+                collection.insert_one(eventData)
+
+    except Exception as e:
+        raise e
+
+
+@celery.task
+def buildReportReadModelOfMissingLineItemsInPhysicalInventory(eventData):
+    try:
+        with MongoClient("mongodb://localhost:27017/") as mongoClient:
+            db = mongoClient["readModels"]
+            collection = db["readModelOfMissingLineItemsInPhysicalInventory"]
+
+            reportIdOfMissingLineItemsInPhysicalInventory = eventData["_id"]
+            existingReport = collection.find_one(
+                {"_id": reportIdOfMissingLineItemsInPhysicalInventory}
+            )
+
+            if existingReport:
+                missingLineItemsInPhysicalInventoryFromCurrentReconciliation = (
+                    json.loads(eventData["missingLineItemsInPhysicalInventory"])
+                )
+                print(missingLineItemsInPhysicalInventoryFromCurrentReconciliation)
+
+                cbOfMissingPhysicalInventoryLineItemsThatWereReconciledInPreviousReconciliations = set(
+                    lineItem["cb"]
+                    for lineItem in existingReport[
+                        "missingLineItemsInPhysicalInventory"
+                    ]
+                )
+
+                newMissingLineItems = [
+                    item
+                    for item in missingLineItemsInPhysicalInventoryFromCurrentReconciliation
+                    if item["cb"]
+                    not in cbOfMissingPhysicalInventoryLineItemsThatWereReconciledInPreviousReconciliations
+                ]
+
+                if newMissingLineItems:
+                    updateOperation = {
+                        "$push": {
+                            "missingLineItemsInPhysicalInventory": {
+                                "$each": newMissingLineItems
+                            }
+                        }
+                    }
+
+                    collection.update_one(
+                        {"_id": reportIdOfMissingLineItemsInPhysicalInventory},
+                        updateOperation,
+                    )
+
+            else:
+                collection.insert_one(eventData)
+
+    except Exception as e:
+        raise e
+
+@celery.task
+def buildReportReadModelOfProblematicLineItemsInPhysicalInventory(eventData):
+    try:
+        with MongoClient("mongodb://localhost:27017/") as mongoClient:
+            db = mongoClient["readModels"]
+            collection = db["problematicLineItemsInPhyscialInventoryReport"]
+
+            reportIdOfProblematicLineItemsInPhysicalInventory = eventData["_id"]
+            existingReport = collection.find_one(
+                {"_id": reportIdOfProblematicLineItemsInPhysicalInventory}
+            )
+
+            if existingReport:
+                problematicLineItemsInPhysicalInventoryFromCurrentReconciliation = (
+                    json.loads(eventData["problematicLineItemsInPhysicalInventory"])
+                )
+                print(problematicLineItemsInPhysicalInventoryFromCurrentReconciliation)
+
+                cbsOfPhysicalInventoryLineItemsThatAreAlreadyProblematicFromPreviousReconciliations = set(
+                    lineItem["cb"]
+                    for lineItem in existingReport[
+                        "missingLineItemsInPhysicalInventory"
+                    ]
+                )
+
+                newMissingLineItems = [
+                    item
+                    for item in problematicLineItemsInPhysicalInventoryFromCurrentReconciliation
+                    if item["cb"]
+                    not in cbsOfPhysicalInventoryLineItemsThatAreAlreadyProblematicFromPreviousReconciliations
+                ]
+
+                if newMissingLineItems:
+                    updateOperation = {
+                        "$push": {
+                            "missingLineItemsInPhysicalInventory": {
+                                "$each": newMissingLineItems
+                            }
+                        }
                     }
 
                     collection.update_one(
@@ -89,11 +184,63 @@ def buildReportReadModelOfMissingLineItemsInAmortizationTable(eventData):
                     )
 
             else:
-                print("are we here")
                 collection.insert_one(eventData)
 
     except Exception as e:
         raise e
+
+@celery.task
+def buildReportReadModelOfProblematicLineItemsInAmortizationTable(eventData):
+    try:
+        with MongoClient("mongodb://localhost:27017/") as mongoClient:
+            db = mongoClient["readModels"]
+            collection = db["problematicLineItemsInAmortizationTable"]
+
+            reportIdOfProblematicLineItemsInAmortizationTable = eventData["_id"]
+            existingReport = collection.find_one(
+                {"_id": reportIdOfProblematicLineItemsInAmortizationTable}
+            )
+
+            if existingReport:
+                problematicLineItemsInAmortizationTableFromCurrentReconciliation = (
+                    json.loads(eventData["problematicLineItemsInAmortizationTable"])
+                )
+                print(problematicLineItemsInAmortizationTableFromCurrentReconciliation)
+
+                numFichesOfAmortizationTableLineItemsThatAreAlreadyProblematicFromPreviousReconciliations = set(
+                    lineItem["NumFiche"]
+                    for lineItem in existingReport[
+                        "missingLineItemsInAmortizationTable"
+                    ]
+                )
+
+                newMissingLineItems = [
+                    item
+                    for item in problematicLineItemsInAmortizationTableFromCurrentReconciliation
+                    if item["NumFiche"]
+                    not in numFichesOfAmortizationTableLineItemsThatAreAlreadyProblematicFromPreviousReconciliations
+                ]
+
+                if newMissingLineItems:
+                    updateOperation = {
+                        "$push": {
+                            "missingLineItemsInPhysicalInventory": {
+                                "$each": newMissingLineItems
+                            }
+                        }
+                    }
+
+                    collection.update_one(
+                        {"_id": reportIdOfProblematicLineItemsInAmortizationTable},
+                        updateOperation,
+                    )
+
+            else:
+                collection.insert_one(eventData)
+
+    except Exception as e:
+        raise e
+
 
 @celery.task
 def buildStrategyReadModel(eventData):
@@ -101,8 +248,8 @@ def buildStrategyReadModel(eventData):
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
             collection = db["strategyReadModel"]
-            query = { "_id": eventData["_id"] }
-            collection.replace_one(query, eventData, upsert= True)
+            query = {"_id": eventData["_id"]}
+            collection.replace_one(query, eventData, upsert=True)
 
     except Exception as e:
         raise e
