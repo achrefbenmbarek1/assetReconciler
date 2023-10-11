@@ -2,7 +2,9 @@ from QuantityReconciliation.Reconciler.domainEvent.DomainEvent import DomainEven
 from QuantityReconciliation.Reconciler.domainEvent.MissingPhysicalInventoryLineItemsExtracted import (
     MissingPhysicalInventoryLineItemsExtracted,
 )
-from QuantityReconciliation.Reconciler.domainEvent.PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted import PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted
+from QuantityReconciliation.Reconciler.domainEvent.PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted import (
+    PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted,
+)
 from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInAmortizationTableExtracted import (
     ProblematicLineItemsInAmortizationTableExtracted,
 )
@@ -12,10 +14,13 @@ from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInPhysica
 from QuantityReconciliation.Reconciler.domainEvent.ReconciliationWasInitialized import (
     ReconciliationWasInitialized,
 )
-from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import StrategyWasChosen
+from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import (
+    StrategyWasChosen,
+)
 from QuantityReconciliation.Reconciler.entity.Reconciler import Reconciler
 from QuantityReconciliation.infrastructure.eventStore.EventStore import EventStore
 import json
+
 # from celeryConfig import celery
 from tasks import (
     buildAmortizationReadModel,
@@ -24,6 +29,7 @@ from tasks import (
     buildReportReadModelOfMissingLineItemsInPhysicalInventory,
     buildReportReadModelOfProblematicLineItemsInAmortizationTable,
     buildReportReadModelOfProblematicLineItemsInPhysicalInventory,
+    buildStrategyCreatorPage,
     buildStrategyReadModel,
 )
 
@@ -38,7 +44,8 @@ class ReconciliationRepository(object):
             reconciler.domainEvents,
             reconciler.reconciliationState.version,
         )
-        
+        print("here we go again")
+
         for event in reconciler.domainEvents:
             if isinstance(event, ReconciliationWasInitialized):
                 physicalInventoryReadModelData = {
@@ -47,7 +54,16 @@ class ReconciliationRepository(object):
                         event.payload["physicalInventory"]
                     ),
                 }
+                physicalInventoryData = event.payload["physicalInventory"]
+                potentialKeys = physicalInventoryData[0].keys() if physicalInventoryData else []
+                print("potential keys", potentialKeys)
+
+                strategyPotentialKeys = {
+                    "_id": event.reconciliationId,
+                    "strategyPotentialKeys": list(potentialKeys),
+                }
                 buildPhysicalInventoryReadModel.delay(physicalInventoryReadModelData)
+                buildStrategyCreatorPage.delay(strategyPotentialKeys)
                 amortizationTableReadModelData = {
                     "_id": event.reconciliationId,
                     "amortizationTableLineItems": json.dumps(
@@ -91,8 +107,11 @@ class ReconciliationRepository(object):
                 buildReportReadModelOfMissingLineItemsInPhysicalInventory.delay(
                     missingLineItemsInPhysicalInventory
                 )
-                
-            elif isinstance(event, PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted):
+
+            elif isinstance(
+                event,
+                PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted,
+            ):
                 missingLineItemsInAmortizationTable = {
                     "_id": event.reconciliationId,
                     "missingLineItemsInAmortizationTable": json.dumps(
@@ -103,7 +122,7 @@ class ReconciliationRepository(object):
                 buildReportReadModelOfMissingLineItemsInAmortizationTable.delay(
                     missingLineItemsInAmortizationTable
                 )
-                
+
             elif isinstance(event, StrategyWasChosen):
                 strategy = {
                     "_id": event.reconciliationId,

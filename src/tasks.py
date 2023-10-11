@@ -241,6 +241,16 @@ def buildReportReadModelOfProblematicLineItemsInAmortizationTable(eventData):
     except Exception as e:
         raise e
 
+@celery.task 
+def buildStrategyCreatorPage(eventData):
+    try:
+        with MongoClient("mongodb://localhost:27017/") as mongoClient:
+            db = mongoClient["readModels"]
+            collection = db["strategyCreatorPageReadModel"]
+            collection.insert_one(eventData)
+    except Exception as e:
+        raise e
+    
 
 @celery.task
 def buildStrategyReadModel(eventData):

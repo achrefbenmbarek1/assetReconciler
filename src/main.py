@@ -15,6 +15,7 @@ from QuantityReconciliation.interactor.CreateAndApplyStrategyHandler import (
 from QuantityReconciliation.interactor.InitializeReconciliationHandler import (
     InitializeReconciliationHandler,
 )
+from QuantityReconciliation.interactor.QueryPotentialKeysForStrategyCreatorPage import QueryPotentialKeysForStrategyCreatorPage
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,7 +34,9 @@ class Cycle(BaseModel):
 class Strategy(BaseModel):
     reconciliationId: str
     orderedCycles: list[Cycle]
-
+    
+class PotentialKeysResponse(BaseModel):
+    potentialKeys: list[str]
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,9 +91,12 @@ async def createAndApplyStrategy(strategy: Strategy):
         return {"error"}, 400
 
 
-@app.get("/")
-async def hello():
-    return {"msg": "reconciliation initialized succesfully"}
+@app.get("/strategyCreatorPage")
+async def queryPotentialKeys(id:str):
+    queryStrategyCreatorPageReadModel = QueryPotentialKeysForStrategyCreatorPage()
+    potentialKeys = queryStrategyCreatorPageReadModel.queryStrategyCreatedPage(id)
+    print(potentialKeys)
+    return {"potentialKeys":potentialKeys}
 
 
 if __name__ == "__main__":

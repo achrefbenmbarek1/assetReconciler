@@ -13,25 +13,16 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +10 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/InitializeReconciliationHandler.py
-badd +62 ~/Document/projects/sideProjects/inventoryMatcher/src/main.py
-badd +22 QuantityReconciliation/Reconciler/entity/Reconciler.py
-badd +38 QuantityReconciliation/infrastructure/projection/ReconcilerState.py
-badd +5 QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
-badd +24 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/CreateAndApplyStrategyHandler.py
-badd +29 QuantityReconciliation/infrastructure/eventStore/DomainEventDataMapper.py
-badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/service/IdGenerator.py
-badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/service/FileWrapperImp.py
-badd +3 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/StrategyWasChosen.py
-badd +1 QuantityReconciliation/infrastructure/projection/CycleState.py
-badd +4 QuantityReconciliation/Reconciler/domainEvent/FileLoaded.py
-badd +1 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/domainEvent/MissingPhysicalInventoryLineItemsExtracted.py
-badd +4 QuantityReconciliation/Reconciler/domainEvent/PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted.py
+badd +100 main.py
+badd +245 ~/Document/projects/sideProjects/inventoryMatcher/src/tasks.py
+badd +2 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/QueryPotentialKeysForStrategyCreatorPage.py
+badd +66 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
 argglobal
 %argdel
-$argadd .
-edit QuantityReconciliation/Reconciler/domainEvent/PhysicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissingWereExtracted.py
+$argadd main.py
+edit main.py
 argglobal
+balt ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/QueryPotentialKeysForStrategyCreatorPage.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -42,12 +33,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 4 - ((3 * winheight(0) + 13) / 27)
+let s:l = 96 - ((20 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 4
-normal! 020|
+keepjumps 96
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

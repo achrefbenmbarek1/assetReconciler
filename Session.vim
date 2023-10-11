@@ -13,11 +13,11 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +0 mongo.conf
+badd +47 ~/Document/projects/sideProjects/inventoryMatcher/src/main.py
 argglobal
 %argdel
-$argadd mongo.conf
-edit mongo.conf
+$argadd .
+edit ~/Document/projects/sideProjects/inventoryMatcher/src/main.py
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -29,12 +29,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 30 - ((9 * winheight(0) + 5) / 11)
+let s:l = 42 - ((6 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 30
-normal! 0
+keepjumps 42
+normal! 012|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
