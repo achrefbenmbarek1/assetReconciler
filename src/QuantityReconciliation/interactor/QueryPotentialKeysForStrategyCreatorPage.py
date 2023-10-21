@@ -11,8 +11,7 @@ class QueryPotentialKeysForStrategyCreatorPage:
                 if (document is None):
                     raise Exception("problem with the strategy creator database")
                 potentialKeys = document.get("strategyPotentialKeys", [])
-                print(type(potentialKeys))
-                return potentialKeys
+                return [ potentialKey for potentialKey in potentialKeys if potentialKey not in ["NumFiche","cb","groupe","famille", "sousFamille"] ]
 
         except Exception as e:
             raise e

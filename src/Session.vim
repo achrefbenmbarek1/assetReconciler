@@ -13,16 +13,12 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +100 main.py
-badd +245 ~/Document/projects/sideProjects/inventoryMatcher/src/tasks.py
-badd +2 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/QueryPotentialKeysForStrategyCreatorPage.py
-badd +66 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/infrastructure/repository/ReconciliationRepository.py
+badd +17 ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/entity/Reconciler.py
 argglobal
 %argdel
-$argadd main.py
-edit main.py
+$argadd .
+edit ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/Reconciler/entity/Reconciler.py
 argglobal
-balt ~/Document/projects/sideProjects/inventoryMatcher/src/QuantityReconciliation/interactor/QueryPotentialKeysForStrategyCreatorPage.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -33,11 +29,11 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 96 - ((20 * winheight(0) + 14) / 29)
+let s:l = 194 - ((41 * winheight(0) + 21) / 42)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 96
+keepjumps 194
 normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

@@ -36,6 +36,7 @@ class Reconciler:
         if isinstance(event, StrategyWasChosen):
             self.applyStrategy()
 
+            
     def initializeReconciliation(
         self, initializeReconciliation: InitializeReconciliation
     ):
@@ -145,8 +146,9 @@ class Reconciler:
             if cycle["similarityThreshold"] > 100 or cycle["similarityThreshold"] < 0:
                 raise Exception("invalid percentage it should be between 0 and 100")
 
-            validKeys = ["intitule", "marque", "model", "fournisseur"]
-            if any(key not in validKeys for key in cycle["reconciliationKeys"]):
+            # validKeys = ["intitule", "marque", "model", "fournisseur"]
+            notValidKeys = ["NumFiche", "cb", "groupe", "famille", "sousFamille"]
+            if any(key in notValidKeys for key in cycle["reconciliationKeys"]):
                 raise Exception("Invalid reconciliation key")
 
             if cycle["categorizationPrecision"] not in (
@@ -173,7 +175,7 @@ class Reconciler:
             possibleCategorisations = ("groupe", "famille", "sousFamille")
             if possibleCategorisations.index(
                 cycle["categorizationPrecision"]
-            ) > possibleCategorisations.index(previousCategorisationPrecision):
+            ) < possibleCategorisations.index(previousCategorisationPrecision):
                 raise Exception(
                     "categorisation should be decreasing or at the very least equal to the one of the previous cycle"
                 )

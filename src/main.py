@@ -17,6 +17,7 @@ from QuantityReconciliation.interactor.InitializeReconciliationHandler import (
 )
 from QuantityReconciliation.interactor.QueryPotentialKeysForStrategyCreatorPage import QueryPotentialKeysForStrategyCreatorPage
 from fastapi import FastAPI, UploadFile, File
+from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -65,7 +66,7 @@ async def initializeReconciliation(fileUploaded: UploadFile = File(...)):
 
     except Exception as e:
         print(str(e))
-        return {"error": str(e)}, 400
+        raise HTTPException(status_code=400, detail="Reconciliation initialization failed: " + str(e))
 
 
 @app.post("/createAndApplyStrategy")
@@ -88,7 +89,7 @@ async def createAndApplyStrategy(strategy: Strategy):
         return {"msg": "strategy accepted and is being applied"}
     except Exception as e:
         print(str(e))
-        return {"error"}, 400
+        raise HTTPException(status_code=400, detail="Strategy creation failed: " + str(e))
 
 
 @app.get("/strategyCreatorPage")
