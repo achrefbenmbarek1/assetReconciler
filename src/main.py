@@ -16,6 +16,7 @@ from QuantityReconciliation.interactor.InitializeReconciliationHandler import (
     InitializeReconciliationHandler,
 )
 from QuantityReconciliation.interactor.QueryPotentialKeysForStrategyCreatorPage import QueryPotentialKeysForStrategyCreatorPage
+from QuantityReconciliation.interactor.QueryProblematicLineItemsInPhysicalInventory import QueryProblematicLineItemsInPhysicalInventory
 from fastapi import FastAPI, UploadFile, File
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
@@ -98,6 +99,13 @@ async def queryPotentialKeys(id:str):
     potentialKeys = queryStrategyCreatorPageReadModel.queryStrategyCreatedPage(id)
     print(potentialKeys)
     return {"potentialKeys":potentialKeys}
+
+@app.get("/reportPageOfPhysicalInventoryProblematicLineItems")
+async def queryProblematicLineItemsInPhysicalInventory(id:str):
+    queryProblematicLineItemsInPhysicalInventory = QueryProblematicLineItemsInPhysicalInventory()
+    problematicLineItemsInPhysicalInventory = queryProblematicLineItemsInPhysicalInventory.QueryProblematicLineItemsInPhysicalInventory(id)
+    print(problematicLineItemsInPhysicalInventory)
+    return {"problematicLineItemsInPhysicalInventory":problematicLineItemsInPhysicalInventory}
 
 
 if __name__ == "__main__":

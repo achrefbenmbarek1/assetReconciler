@@ -9,8 +9,8 @@ celery = Celery(
 )
 
 
-@celery.task
-def buildAmortizationReadModel(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildAmortizationReadModel(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -18,11 +18,13 @@ def buildAmortizationReadModel(eventData):
             collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(f"Retrying task (retry {self.request.retries}): {e}")
+        print(f"Task ID: {self.request.id}")
+        raise self.retry(countdown=2 ** self.request.retries)
 
 
-@celery.task
-def buildPhysicalInventoryReadModel(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildPhysicalInventoryReadModel(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -30,11 +32,12 @@ def buildPhysicalInventoryReadModel(eventData):
             collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(e) 
+        raise self.retry(countdown=2 ** self.request.retries)
 
 
-@celery.task
-def buildReportReadModelOfMissingLineItemsInAmortizationTable(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildReportReadModelOfMissingLineItemsInAmortizationTable(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -82,11 +85,12 @@ def buildReportReadModelOfMissingLineItemsInAmortizationTable(eventData):
                 collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)
 
 
-@celery.task
-def buildReportReadModelOfMissingLineItemsInPhysicalInventory(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildReportReadModelOfMissingLineItemsInPhysicalInventory(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -135,10 +139,11 @@ def buildReportReadModelOfMissingLineItemsInPhysicalInventory(eventData):
                 collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)
 
-@celery.task
-def buildReportReadModelOfProblematicLineItemsInPhysicalInventory(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildReportReadModelOfProblematicLineItemsInPhysicalInventory(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -187,10 +192,11 @@ def buildReportReadModelOfProblematicLineItemsInPhysicalInventory(eventData):
                 collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)
 
-@celery.task
-def buildReportReadModelOfProblematicLineItemsInAmortizationTable(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildReportReadModelOfProblematicLineItemsInAmortizationTable(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -239,21 +245,23 @@ def buildReportReadModelOfProblematicLineItemsInAmortizationTable(eventData):
                 collection.insert_one(eventData)
 
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)
 
-@celery.task 
-def buildStrategyCreatorPage(eventData):
+@celery.task(bind=True, max_retries=3) 
+def buildStrategyCreatorPage(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
             collection = db["strategyCreatorPageReadModel"]
             collection.insert_one(eventData)
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)
     
 
-@celery.task
-def buildStrategyReadModel(eventData):
+@celery.task(bind=True, max_retries=3)
+def buildStrategyReadModel(self, eventData):
     try:
         with MongoClient("mongodb://localhost:27017/") as mongoClient:
             db = mongoClient["readModels"]
@@ -262,4 +270,5 @@ def buildStrategyReadModel(eventData):
             collection.replace_one(query, eventData, upsert=True)
 
     except Exception as e:
-        raise e
+        print(e)
+        raise self.retry(countdown=2 ** self.request.retries)

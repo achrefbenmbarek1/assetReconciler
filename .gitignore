@@ -1,2 +1,5 @@
 .venv
 /test/inputFiles/
+/src/.scannerwork/
+/src/QuantityReconciliation/.scannerwork/
+/test/endToEndTests/.scannerwork/

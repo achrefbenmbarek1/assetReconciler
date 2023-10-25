@@ -1,0 +1,2 @@
+curl -X POST -F "fileUploaded=@/home/achref/Document/projects/sideProjects/inventoryMatcher/test/inputFiles/testSample65.xlsx" http://localhost:8000/initializeReconciliation
+

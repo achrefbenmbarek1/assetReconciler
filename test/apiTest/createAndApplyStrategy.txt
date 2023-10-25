@@ -1,0 +1,32 @@
+curl -X POST http://localhost:8000/createAndApplyStrategy \
+-H "Content-Type: application/json" \
+-d '{
+  "reconciliationId": "testSample65.xlsx",
+  "orderedCycles": [
+    {
+      "similarityThreshold": 90,
+      "reconciliationKeys": ["intitule", "marque"],
+      "categorizationPrecision": "groupe",
+      "algorithm": "Levenshtein"
+    },
+    {
+      "similarityThreshold": 80,
+      "reconciliationKeys": ["intitule", "marque"],
+      "categorizationPrecision": "famille",
+      "algorithm": "Jaccard"
+    },
+    {
+      "similarityThreshold": 80,
+      "reconciliationKeys": ["intitule"],
+      "categorizationPrecision": "famille",
+      "algorithm": "Jaccard"
+    },
+    {
+      "similarityThreshold": 70,
+      "reconciliationKeys": ["intitule"],
+      "categorizationPrecision": "sousFamille",
+      "algorithm": "Jaccard"
+    }
+  ]
+}'
+

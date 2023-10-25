@@ -11,7 +11,9 @@ from QuantityReconciliation.Reconciler.domainEvent.ProblematicLineItemsInPhysica
 from QuantityReconciliation.Reconciler.domainEvent.ReconciliationWasInitialized import (
     ReconciliationWasInitialized,
 )
-from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import StrategyWasChosen
+from QuantityReconciliation.Reconciler.domainEvent.StrategyWasChosen import (
+    StrategyWasChosen,
+)
 from QuantityReconciliation.infrastructure.command.CreateStrategy import CreateStrategy
 from QuantityReconciliation.infrastructure.command.InitializeReconciliation import (
     InitializeReconciliation,
@@ -19,6 +21,7 @@ from QuantityReconciliation.infrastructure.command.InitializeReconciliation impo
 from QuantityReconciliation.infrastructure.projection.ReconcilerState import (
     ReconciliationState,
 )
+
 
 class Reconciler:
     reconciliationState: ReconciliationState
@@ -36,7 +39,6 @@ class Reconciler:
         if isinstance(event, StrategyWasChosen):
             self.applyStrategy()
 
-            
     def initializeReconciliation(
         self, initializeReconciliation: InitializeReconciliation
     ):
@@ -48,7 +50,7 @@ class Reconciler:
             for physicalLineItem in initializeReconciliation.physcialInventoryLineItems
             if physicalLineItem["cb"] != "Missing"
         ]
-        
+
         problematicLineItemsInPhysicalInventory = [
             physicalInventoryLineItem
             for physicalInventoryLineItem in initializeReconciliation.physcialInventoryLineItems
@@ -111,7 +113,6 @@ class Reconciler:
             physicalInventoryLineItemsThatTheirPreviouslyReconciledCounterpartsInAmortizationTableAreMissing,
         )
 
-
         problematicLineItemsInPhysicalInventoryExtracted = (
             ProblematicLineItemsInPhysicalInventoryExtracted(
                 initializeReconciliation.eventsIds[2],
@@ -146,7 +147,6 @@ class Reconciler:
             if cycle["similarityThreshold"] > 100 or cycle["similarityThreshold"] < 0:
                 raise Exception("invalid percentage it should be between 0 and 100")
 
-            # validKeys = ["intitule", "marque", "model", "fournisseur"]
             notValidKeys = ["NumFiche", "cb", "groupe", "famille", "sousFamille"]
             if any(key in notValidKeys for key in cycle["reconciliationKeys"]):
                 raise Exception("Invalid reconciliation key")
